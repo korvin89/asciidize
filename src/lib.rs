@@ -1,4 +1,4 @@
-pub mod alphabet_mapper {}
+pub mod alphabet_mapper;
 
 pub mod image_converter {}
 

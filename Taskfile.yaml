@@ -55,7 +55,7 @@ tasks:
       - cargo clippy
 
       - echo 'Running compile fixes...'
-      - cargo fix --allow-dirty
+      - cargo fix --allow-staged --allow-dirty
 
   build:
     desc: Build project
