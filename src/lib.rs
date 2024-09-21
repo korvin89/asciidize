@@ -1,9 +1,5 @@
-pub fn alphabet_mapper() -> String {
-    return String::new();
-}
+pub mod alphabet_mapper {}
 
-pub fn image_converter() -> String {
-    return String::new();
-}
+pub mod image_converter {}
 
 pub mod utils {}
