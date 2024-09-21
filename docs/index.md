@@ -17,11 +17,10 @@ Proposed format for mapping data:
 
 ```json
 {
-  "symbol_width": 5,
-  "symbol_height": 5,
-  "data": {
-    "A": "00100\n01010\n10001\n11111\n10001\n",
-    "B": "11110\n10001\n11110\n10001\n11110\n",
+  "symbol_width": 3,
+  "symbol_height": 3,
+  "symbol_map": {
+    "A": [[1,1,1],[1,0,1],[1,1,1]],
     ...
   }
 }
