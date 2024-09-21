@@ -34,6 +34,14 @@ tasks:
       - task: _prettier
         vars: { COMMAND: "--check ." }
 
+      - echo 'Running cargo checks...'
+      - cargo check
+      - cargo fmt -- --check
+      - cargo clippy
+
+      - echo 'Running compile checks...'
+      - cargo rustc
+
   lint-fix:
     desc: Lint fix project
     cmds:
@@ -41,16 +49,34 @@ tasks:
       - task: _prettier
         vars: { COMMAND: "--write ." }
 
+      - echo 'Running cargo fixes...'
+      - cargo check
+      - cargo fmt
+      - cargo clippy
+
+      - echo 'Running compile fixes...'
+      - cargo fix --allow-dirty
+
+  build:
+    desc: Build project
+    cmds:
+      - echo 'Building project...'
+      - cargo build
+
   test:
     desc: Test project
     cmds:
       - echo 'Running tests...'
+      - cargo test
 
   clean:
     desc: Clean project environment
     cmds:
       - echo 'Cleaning node dependencies...'
       - rm -rf {{.NENV}}
+
+      - echo 'Cleaning cargo cache...'
+      - cargo clean
 
   dependencies-update:
     desc: Update dependencies
@@ -62,6 +88,9 @@ tasks:
         vars: { COMMAND: "npm outdated" }
       - task: _with_nvm
         vars: { COMMAND: "npm audit" }
+
+      - echo 'Updating cargo dependencies...'
+      - cargo update
 
   update-from-template:
     desc: Update project from template

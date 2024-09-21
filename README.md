@@ -12,6 +12,7 @@ Asciidize
 
 - nvm
 - node
+- rust
 
 ### Taskfile commands
 

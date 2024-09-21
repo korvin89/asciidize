@@ -15,6 +15,9 @@
   "lint-staged": {
     "*.{md,yaml,json,js}": [
       "prettier --check"
+    ],
+    "*.rs": [
+      "rustfmt --check"
     ]
   },
   "scripts": {
