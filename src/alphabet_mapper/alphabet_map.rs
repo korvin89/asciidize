@@ -2,7 +2,6 @@ use core::str::FromStr;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fmt;
-use std::fmt::Display;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AlphabetMap {
@@ -33,7 +32,7 @@ impl FromStr for AlphabetMap {
     }
 }
 
-impl Display for AlphabetMap {
+impl fmt::Display for AlphabetMap {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", serde_json::to_string(self).unwrap())
     }
