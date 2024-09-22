@@ -71,9 +71,9 @@ fn png_to_bitmap(filename: &str) -> Bitmap {
 mod tests {
     use super::*;
 
-    const TEST_IMAGE_FOLDER_PATH: &str = "tests/test_images";
+    const EXPECTED_IMAGE_FOLDER_PATH: &str = "tests/test_images";
     const TEST_IMAGE_NAME: &str = "2x2";
-    const TEMP_TEST_IMAGE_FOLDER_PATH: &str = "/tmp";
+    const TEST_IMAGE_FOLDER_PATH: &str = "tests//tmp";
 
     fn get_bitmap() -> Bitmap {
         let pixels = vec![
@@ -120,8 +120,8 @@ mod tests {
     }
 
     fn get_expected_file_path(image_type: &ImageType) -> std::string::String {
-        let current_folder = std::path::Path::new(TEST_IMAGE_FOLDER_PATH);
-        let file_path = current_folder
+        let folder_path = std::path::Path::new(EXPECTED_IMAGE_FOLDER_PATH);
+        let file_path = folder_path
             .join(TEST_IMAGE_NAME)
             .with_extension(match image_type {
                 ImageType::PNG => "png",
@@ -130,8 +130,12 @@ mod tests {
     }
 
     fn get_test_file_path(image_type: &ImageType) -> std::string::String {
-        let current_folder = std::path::Path::new(TEMP_TEST_IMAGE_FOLDER_PATH);
-        let file_path = current_folder
+        let folder_path = std::path::Path::new(TEST_IMAGE_FOLDER_PATH);
+        if !folder_path.exists() {
+            std::fs::create_dir(folder_path).unwrap();
+        }
+
+        let file_path = folder_path
             .join(TEST_IMAGE_NAME)
             .with_extension(match image_type {
                 ImageType::PNG => "png",
@@ -147,6 +151,8 @@ mod tests {
 
         let expected_filename = get_expected_file_path(&ImageType::PNG);
         assert_file_content(&filename, &expected_filename);
+
+        std::fs::remove_file(&filename).unwrap();
     }
 
     #[test]
