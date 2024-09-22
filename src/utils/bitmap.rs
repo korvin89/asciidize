@@ -19,13 +19,13 @@ pub enum ImageType {
     PNG,
 }
 
-pub fn save_bitmap_to_file(bitmap: Bitmap, filename: &str, image_type: ImageType) {
+pub fn save_bitmap_to_file(bitmap: &Bitmap, filename: &str, image_type: &ImageType) {
     match image_type {
         ImageType::PNG => bitmap_to_png(bitmap, filename),
     }
 }
 
-fn bitmap_to_png(bitmap: Bitmap, filename: &str) {
+fn bitmap_to_png(bitmap: &Bitmap, filename: &str) {
     let mut image_buffer = image::ImageBuffer::new(bitmap.width, bitmap.height);
     for y in 0..bitmap.height {
         for x in 0..bitmap.width {
@@ -36,7 +36,8 @@ fn bitmap_to_png(bitmap: Bitmap, filename: &str) {
     image_buffer.save(filename).unwrap();
 }
 
-pub fn load_bitmap_from_file(filename: &str, image_type: ImageType) -> Bitmap {
+#[must_use]
+pub fn load_bitmap_from_file(filename: &str, image_type: &ImageType) -> Bitmap {
     match image_type {
         ImageType::PNG => return png_to_bitmap(filename),
     }
@@ -118,7 +119,7 @@ mod tests {
         assert_eq!(expected, actual);
     }
 
-    fn get_expected_file_path(image_type: ImageType) -> std::string::String {
+    fn get_expected_file_path(image_type: &ImageType) -> std::string::String {
         let current_folder = std::path::Path::new(TEST_IMAGE_FOLDER_PATH);
         let file_path = current_folder
             .join(TEST_IMAGE_NAME)
@@ -128,7 +129,7 @@ mod tests {
         return file_path.to_string_lossy().to_string();
     }
 
-    fn get_test_file_path(image_type: ImageType) -> std::string::String {
+    fn get_test_file_path(image_type: &ImageType) -> std::string::String {
         let current_folder = std::path::Path::new(TEMP_TEST_IMAGE_FOLDER_PATH);
         let file_path = current_folder
             .join(TEST_IMAGE_NAME)
@@ -141,17 +142,17 @@ mod tests {
     #[test]
     fn test_save_bitmap_to_file() {
         let bitmap = get_bitmap();
-        let filename = get_test_file_path(ImageType::PNG);
-        save_bitmap_to_file(bitmap, &filename, ImageType::PNG);
+        let filename = get_test_file_path(&ImageType::PNG);
+        save_bitmap_to_file(&bitmap, &filename, &ImageType::PNG);
 
-        let expected_filename = get_expected_file_path(ImageType::PNG);
+        let expected_filename = get_expected_file_path(&ImageType::PNG);
         assert_file_content(&filename, &expected_filename);
     }
 
     #[test]
     fn test_load_bitmap_from_file() {
-        let expected_filename = get_expected_file_path(ImageType::PNG);
-        let bitmap = load_bitmap_from_file(&expected_filename, ImageType::PNG);
+        let expected_filename = get_expected_file_path(&ImageType::PNG);
+        let bitmap = load_bitmap_from_file(&expected_filename, &ImageType::PNG);
         let expected_bitmap = get_bitmap();
         assert_eq!(bitmap, expected_bitmap);
     }
