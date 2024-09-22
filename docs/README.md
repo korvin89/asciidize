@@ -1,3 +1,5 @@
+# Asciidize
+
 Application aims to provide ability to generate ascii art from images independently of target fonts and symbols.
 
 Should consist of two main parts:
