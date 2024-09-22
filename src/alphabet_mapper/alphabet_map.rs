@@ -25,10 +25,9 @@ impl FromStr for AlphabetMap {
     type Err = InvalidDataError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let alphabet_map: AlphabetMap = serde_json::from_str(s).map_err(|e| InvalidDataError {
+        serde_json::from_str(s).map_err(|e| InvalidDataError {
             message: e.to_string(),
-        })?;
-        Ok(alphabet_map)
+        })
     }
 }
 
