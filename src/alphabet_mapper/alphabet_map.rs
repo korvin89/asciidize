@@ -17,7 +17,7 @@ pub struct InvalidDataError {
 
 impl fmt::Display for InvalidDataError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "Invalid data: {}", self.message)
+        return write!(f, "Invalid data: {}", self.message);
     }
 }
 
@@ -25,15 +25,17 @@ impl FromStr for AlphabetMap {
     type Err = InvalidDataError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        serde_json::from_str(s).map_err(|e| InvalidDataError {
-            message: e.to_string(),
-        })
+        return serde_json::from_str(s).map_err(|e| {
+            return InvalidDataError {
+                message: e.to_string(),
+            };
+        });
     }
 }
 
 impl fmt::Display for AlphabetMap {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", serde_json::to_string(self).unwrap())
+        return write!(f, "{}", serde_json::to_string(self).unwrap());
     }
 }
 
