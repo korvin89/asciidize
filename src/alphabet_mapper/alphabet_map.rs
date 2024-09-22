@@ -1,7 +1,7 @@
 use core::str::FromStr;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::string::ToString;
+use std::fmt;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AlphabetMap {
@@ -10,17 +10,32 @@ pub struct AlphabetMap {
     symbol_map: HashMap<char, Vec<Vec<u8>>>,
 }
 
-impl FromStr for AlphabetMap {
-    type Err = serde_json::Error;
+#[derive(Debug, Clone)]
+pub struct InvalidDataError {
+    message: String,
+}
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        serde_json::from_str(s)
+impl fmt::Display for InvalidDataError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return write!(f, "Invalid data: {}", self.message);
     }
 }
 
-impl ToString for AlphabetMap {
-    fn to_string(&self) -> String {
-        serde_json::to_string(self).unwrap()
+impl FromStr for AlphabetMap {
+    type Err = InvalidDataError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        return serde_json::from_str(s).map_err(|e| {
+            return InvalidDataError {
+                message: e.to_string(),
+            };
+        });
+    }
+}
+
+impl fmt::Display for AlphabetMap {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        return write!(f, "{}", serde_json::to_string(self).unwrap());
     }
 }
 
@@ -29,7 +44,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_alphabet_map_to_string() {
+    fn test_to_string() {
         let mut symbol_map = HashMap::new();
         symbol_map.insert('A', vec![vec![1, 1, 1], vec![1, 0, 1], vec![1, 1, 1]]);
         let alphabet_map = AlphabetMap {
@@ -42,7 +57,7 @@ mod tests {
     }
 
     #[test]
-    fn test_string_to_alphabet_map() {
+    fn test_from_str() {
         let json_string = "{\"symbol_width\":3,\"symbol_height\":3,\"symbol_map\":{\"A\":[[1,1,1],[1,0,1],[1,1,1]]}}";
         let alphabet_map = AlphabetMap::from_str(json_string).unwrap();
         assert_eq!(alphabet_map.symbol_width, 3);
@@ -50,6 +65,17 @@ mod tests {
         assert_eq!(
             alphabet_map.symbol_map.get(&'A').unwrap(),
             &vec![vec![1, 1, 1], vec![1, 0, 1], vec![1, 1, 1]]
+        );
+    }
+
+    #[test]
+    fn test_from_str_invalid_data() {
+        let json_string = "{";
+        let alphabet_map = AlphabetMap::from_str(json_string);
+        assert_eq!(alphabet_map.is_err(), true);
+        assert_eq!(
+            alphabet_map.err().unwrap().to_string(),
+            "Invalid data: EOF while parsing an object at line 1 column 1"
         );
     }
 }
