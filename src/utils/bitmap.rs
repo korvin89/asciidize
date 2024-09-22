@@ -21,11 +21,11 @@ pub enum ImageType {
 
 pub fn save_bitmap_to_file(bitmap: Bitmap, filename: &str, image_type: ImageType) {
     match image_type {
-        ImageType::PNG => _bitmap_to_png(bitmap, filename),
+        ImageType::PNG => bitmap_to_png(bitmap, filename),
     }
 }
 
-fn _bitmap_to_png(bitmap: Bitmap, filename: &str) {
+fn bitmap_to_png(bitmap: Bitmap, filename: &str) {
     let mut image_buffer = image::ImageBuffer::new(bitmap.width, bitmap.height);
     for y in 0..bitmap.height {
         for x in 0..bitmap.width {
@@ -38,11 +38,11 @@ fn _bitmap_to_png(bitmap: Bitmap, filename: &str) {
 
 pub fn load_bitmap_from_file(filename: &str, image_type: ImageType) -> Bitmap {
     match image_type {
-        ImageType::PNG => return _png_to_bitmap(filename),
+        ImageType::PNG => return png_to_bitmap(filename),
     }
 }
 
-fn _png_to_bitmap(filename: &str) -> Bitmap {
+fn png_to_bitmap(filename: &str) -> Bitmap {
     let image_buffer = image::open(filename).unwrap();
     let (width, height) = image_buffer.dimensions();
     let mut pixels = Vec::new();
