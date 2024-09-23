@@ -131,9 +131,7 @@ mod tests {
 
     fn get_test_file_path(image_type: &ImageType) -> std::string::String {
         let folder_path = std::path::Path::new(TEST_IMAGE_FOLDER_PATH);
-        if !folder_path.exists() {
-            std::fs::create_dir(folder_path).unwrap();
-        }
+        std::fs::create_dir_all(folder_path).unwrap();
 
         let file_path = folder_path
             .join(TEST_IMAGE_NAME)
