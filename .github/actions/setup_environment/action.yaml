@@ -16,6 +16,7 @@ runs:
         version: ${{ inputs.task-version }}
     
     - name: Install Rust
+      shell: bash
       run: rustup update stable
     
     - name: Install cargo-llvm-cov
