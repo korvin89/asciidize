@@ -69,6 +69,17 @@ tasks:
       - echo 'Running tests...'
       - cargo test
 
+  test-coverage:
+    desc: Test project with coverage
+    cmds:
+      - cargo llvm-cov test --fail-under-lines=100
+
+  test-coverage-html:
+    desc: Open coverage report in browser
+    cmds:
+      - cargo llvm-cov --html
+      - cargo llvm-cov --open
+
   clean:
     desc: Clean project environment
     cmds:
