@@ -1,1 +1,1 @@
-pub mod image_converter;
+pub mod image_converter {}
