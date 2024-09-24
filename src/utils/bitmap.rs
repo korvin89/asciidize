@@ -19,13 +19,13 @@ pub enum ImageType {
     PNG,
 }
 
-pub fn save_bitmap_to_file(bitmap: &Bitmap, filename: &str, image_type: &ImageType) {
+pub fn save_to_file(bitmap: &Bitmap, filename: &str, image_type: &ImageType) {
     match image_type {
-        ImageType::PNG => bitmap_to_png(bitmap, filename),
+        ImageType::PNG => save_to_png_file(bitmap, filename),
     }
 }
 
-fn bitmap_to_png(bitmap: &Bitmap, filename: &str) {
+fn save_to_png_file(bitmap: &Bitmap, filename: &str) {
     let mut image_buffer = image::ImageBuffer::new(bitmap.width, bitmap.height);
     for y in 0..bitmap.height {
         for x in 0..bitmap.width {
@@ -37,13 +37,13 @@ fn bitmap_to_png(bitmap: &Bitmap, filename: &str) {
 }
 
 #[must_use]
-pub fn load_bitmap_from_file(filename: &str, image_type: &ImageType) -> Bitmap {
+pub fn load_from_file(filename: &str, image_type: &ImageType) -> Bitmap {
     match image_type {
-        ImageType::PNG => return png_to_bitmap(filename),
+        ImageType::PNG => return load_from_png_file(filename),
     }
 }
 
-fn png_to_bitmap(filename: &str) -> Bitmap {
+fn load_from_png_file(filename: &str) -> Bitmap {
     let image_buffer = image::open(filename).unwrap();
     let (width, height) = image_buffer.dimensions();
     let mut pixels = Vec::new();
@@ -142,10 +142,10 @@ mod tests {
     }
 
     #[test]
-    fn test_save_bitmap_to_file() {
+    fn test_save_to_file() {
         let bitmap = get_bitmap();
         let filename = get_test_file_path(&ImageType::PNG);
-        save_bitmap_to_file(&bitmap, &filename, &ImageType::PNG);
+        save_to_file(&bitmap, &filename, &ImageType::PNG);
 
         let expected_filename = get_expected_file_path(&ImageType::PNG);
         assert_file_content(&filename, &expected_filename);
@@ -154,9 +154,9 @@ mod tests {
     }
 
     #[test]
-    fn test_load_bitmap_from_file() {
+    fn test_load_from_file() {
         let expected_filename = get_expected_file_path(&ImageType::PNG);
-        let bitmap = load_bitmap_from_file(&expected_filename, &ImageType::PNG);
+        let bitmap = load_from_file(&expected_filename, &ImageType::PNG);
         let expected_bitmap = get_bitmap();
         assert_eq!(bitmap, expected_bitmap);
     }
