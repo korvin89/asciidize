@@ -8,6 +8,19 @@ pub struct Pixel {
     pub a: u8,
 }
 
+impl Pixel {
+    /// # Panics
+    ///
+    /// Will panic if atleast one pixel has incorrect rgb values
+    pub fn to_grayscale(&mut self) {
+        let value =
+            u8::try_from((u16::from(self.r) + u16::from(self.g) + u16::from(self.b)) / 3).unwrap();
+        self.r = value;
+        self.g = value;
+        self.b = value;
+    }
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct Bitmap {
     pub width: u32,
@@ -67,38 +80,28 @@ fn load_from_png_file(filename: &str) -> Bitmap {
     };
 }
 
-/// # Panics
-///
-/// Will panic if atleast one pixel has incorrect rgb values
 #[must_use]
-pub fn to_grayscale(bitmap: &Bitmap) -> Bitmap {
-    let mut bitmap_grayscale = bitmap.clone();
-
-    for y in 0..bitmap_grayscale.height {
-        for x in 0..bitmap_grayscale.width {
-            let mut pixel = bitmap_grayscale.pixels[y as usize][x as usize].clone();
-            let value =
-                u8::try_from((u16::from(pixel.r) + u16::from(pixel.g) + u16::from(pixel.b)) / 3)
-                    .unwrap();
-            pixel.r = value;
-            pixel.g = value;
-            pixel.b = value;
-            bitmap_grayscale.pixels[y as usize][x as usize] = pixel;
+pub fn to_grayscale(mut bitmap: Bitmap) -> Bitmap {
+    for y in 0..bitmap.height {
+        for x in 0..bitmap.width {
+            let mut pixel = bitmap.pixels[y as usize][x as usize].clone();
+            pixel.to_grayscale();
+            bitmap.pixels[y as usize][x as usize] = pixel;
         }
     }
 
-    return bitmap_grayscale;
+    return bitmap;
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::utils::test_helpers;
+    use crate::utils::test;
 
     use super::*;
 
     const IMAGE_2X2: &str = "2x2";
-    const IMAGE_GRAYSCALE_INPUT: &str = "to_grayscale_input";
-    const IMAGE_GRAYSCALE_EXPECTED: &str = "to_grayscale_expected";
+    const IMAGE_FROG_COLOR: &str = "frog_32x32_color";
+    const IMAGE_FROG_GRAY: &str = "frog_32x32_gray";
 
     fn get_bitmap() -> Bitmap {
         let pixels = vec![
@@ -147,10 +150,10 @@ mod tests {
     #[test]
     fn test_save_to_file() {
         let bitmap = get_bitmap();
-        let filename = test_helpers::get_test_file_path(&ImageType::PNG, IMAGE_2X2);
+        let filename = test::get_test_file_path(&ImageType::PNG, IMAGE_2X2);
         save_to_file(&bitmap, &filename, &ImageType::PNG);
 
-        let expected_filename = test_helpers::get_expected_file_path(&ImageType::PNG, IMAGE_2X2);
+        let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_2X2);
         assert_file_content(&filename, &expected_filename);
 
         std::fs::remove_file(&filename).unwrap();
@@ -158,7 +161,7 @@ mod tests {
 
     #[test]
     fn test_load_from_file() {
-        let expected_filename = test_helpers::get_expected_file_path(&ImageType::PNG, IMAGE_2X2);
+        let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_2X2);
         let bitmap = load_from_file(&expected_filename, &ImageType::PNG);
         let expected_bitmap = get_bitmap();
         assert_eq!(bitmap, expected_bitmap);
@@ -166,13 +169,11 @@ mod tests {
 
     #[test]
     fn test_to_grayscale() {
-        let grayscale_filename =
-            test_helpers::get_expected_file_path(&ImageType::PNG, IMAGE_GRAYSCALE_INPUT);
-        let expected_filename =
-            test_helpers::get_expected_file_path(&ImageType::PNG, IMAGE_GRAYSCALE_EXPECTED);
-        let grayscaled_bitmap = load_from_file(&grayscale_filename, &ImageType::PNG);
-        let grayscaled_bitmap = to_grayscale(&grayscaled_bitmap);
+        let gray_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_FROG_COLOR);
+        let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_FROG_GRAY);
+        let color_bitmap = load_from_file(&gray_filename, &ImageType::PNG);
+        let gray_bitmap = to_grayscale(color_bitmap);
         let expected_bitmap = load_from_file(&expected_filename, &ImageType::PNG);
-        assert_eq!(grayscaled_bitmap, expected_bitmap);
+        assert_eq!(gray_bitmap, expected_bitmap);
     }
 }
