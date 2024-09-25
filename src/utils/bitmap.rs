@@ -11,7 +11,7 @@ pub struct Pixel {
 impl Pixel {
     /// # Panics
     ///
-    /// Will panic if atleast one pixel has incorrect rgb values
+    /// Will panic if pixel has incorrect rgb values
     pub fn to_grayscale(&mut self) {
         let value =
             u8::try_from((u16::from(self.r) + u16::from(self.g) + u16::from(self.b)) / 3).unwrap();
@@ -26,6 +26,16 @@ pub struct Bitmap {
     pub width: u32,
     pub height: u32,
     pub pixels: Vec<Vec<Pixel>>,
+}
+
+impl Bitmap {
+    pub fn to_grayscale(&mut self) {
+        for y in 0..self.height {
+            for x in 0..self.width {
+                self.pixels[y as usize][x as usize].to_grayscale();
+            }
+        }
+    }
 }
 
 pub enum ImageType {
@@ -78,19 +88,6 @@ fn load_from_png_file(filename: &str) -> Bitmap {
         height,
         pixels,
     };
-}
-
-#[must_use]
-pub fn to_grayscale(mut bitmap: Bitmap) -> Bitmap {
-    for y in 0..bitmap.height {
-        for x in 0..bitmap.width {
-            let mut pixel = bitmap.pixels[y as usize][x as usize].clone();
-            pixel.to_grayscale();
-            bitmap.pixels[y as usize][x as usize] = pixel;
-        }
-    }
-
-    return bitmap;
 }
 
 #[cfg(test)]
@@ -171,9 +168,9 @@ mod tests {
     fn test_to_grayscale() {
         let gray_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_FROG_COLOR);
         let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_FROG_GRAY);
-        let color_bitmap = load_from_file(&gray_filename, &ImageType::PNG);
-        let gray_bitmap = to_grayscale(color_bitmap);
+        let mut result_bitmap = load_from_file(&gray_filename, &ImageType::PNG);
+        result_bitmap.to_grayscale();
         let expected_bitmap = load_from_file(&expected_filename, &ImageType::PNG);
-        assert_eq!(gray_bitmap, expected_bitmap);
+        assert_eq!(result_bitmap, expected_bitmap);
     }
 }
