@@ -8,11 +8,34 @@ pub struct Pixel {
     pub a: u8,
 }
 
+impl Pixel {
+    /// # Panics
+    ///
+    /// Will panic if pixel has incorrect rgb values
+    pub fn to_grayscale(&mut self) {
+        let value =
+            u8::try_from((u16::from(self.r) + u16::from(self.g) + u16::from(self.b)) / 3).unwrap();
+        self.r = value;
+        self.g = value;
+        self.b = value;
+    }
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct Bitmap {
     pub width: u32,
     pub height: u32,
     pub pixels: Vec<Vec<Pixel>>,
+}
+
+impl Bitmap {
+    pub fn to_grayscale(&mut self) {
+        for y in 0..self.height {
+            for x in 0..self.width {
+                self.pixels[y as usize][x as usize].to_grayscale();
+            }
+        }
+    }
 }
 
 pub enum ImageType {
@@ -69,11 +92,13 @@ fn load_from_png_file(filename: &str) -> Bitmap {
 
 #[cfg(test)]
 mod tests {
+    use crate::utils::test;
+
     use super::*;
 
-    const EXPECTED_IMAGE_FOLDER_PATH: &str = "tests/test_images";
-    const TEST_IMAGE_NAME: &str = "2x2";
-    const TEST_IMAGE_FOLDER_PATH: &str = "tests//tmp";
+    const IMAGE_2X2: &str = "2x2";
+    const IMAGE_FROG_COLOR: &str = "frog_32x32_color";
+    const IMAGE_FROG_GRAY: &str = "frog_32x32_gray";
 
     fn get_bitmap() -> Bitmap {
         let pixels = vec![
@@ -119,35 +144,13 @@ mod tests {
         assert_eq!(expected, actual);
     }
 
-    fn get_expected_file_path(image_type: &ImageType) -> std::string::String {
-        let folder_path = std::path::Path::new(EXPECTED_IMAGE_FOLDER_PATH);
-        let file_path = folder_path
-            .join(TEST_IMAGE_NAME)
-            .with_extension(match image_type {
-                ImageType::PNG => "png",
-            });
-        return file_path.to_string_lossy().to_string();
-    }
-
-    fn get_test_file_path(image_type: &ImageType) -> std::string::String {
-        let folder_path = std::path::Path::new(TEST_IMAGE_FOLDER_PATH);
-        std::fs::create_dir_all(folder_path).unwrap();
-
-        let file_path = folder_path
-            .join(TEST_IMAGE_NAME)
-            .with_extension(match image_type {
-                ImageType::PNG => "png",
-            });
-        return file_path.to_string_lossy().to_string();
-    }
-
     #[test]
     fn test_save_to_file() {
         let bitmap = get_bitmap();
-        let filename = get_test_file_path(&ImageType::PNG);
+        let filename = test::get_test_file_path(&ImageType::PNG, IMAGE_2X2);
         save_to_file(&bitmap, &filename, &ImageType::PNG);
 
-        let expected_filename = get_expected_file_path(&ImageType::PNG);
+        let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_2X2);
         assert_file_content(&filename, &expected_filename);
 
         std::fs::remove_file(&filename).unwrap();
@@ -155,9 +158,19 @@ mod tests {
 
     #[test]
     fn test_load_from_file() {
-        let expected_filename = get_expected_file_path(&ImageType::PNG);
+        let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_2X2);
         let bitmap = load_from_file(&expected_filename, &ImageType::PNG);
         let expected_bitmap = get_bitmap();
         assert_eq!(bitmap, expected_bitmap);
+    }
+
+    #[test]
+    fn test_to_grayscale() {
+        let gray_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_FROG_COLOR);
+        let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_FROG_GRAY);
+        let mut result_bitmap = load_from_file(&gray_filename, &ImageType::PNG);
+        result_bitmap.to_grayscale();
+        let expected_bitmap = load_from_file(&expected_filename, &ImageType::PNG);
+        assert_eq!(result_bitmap, expected_bitmap);
     }
 }
