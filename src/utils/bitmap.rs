@@ -9,12 +9,9 @@ pub struct Pixel {
 }
 
 impl Pixel {
-    /// # Panics
-    ///
-    /// Will panic if pixel has incorrect rgb values
     pub fn to_grayscale(&mut self) {
         let value =
-            u8::try_from((u16::from(self.r) + u16::from(self.g) + u16::from(self.b)) / 3).unwrap();
+            self.r / 3 + self.g / 3 + self.b / 3 + (self.r % 3 + self.g % 3 + self.b % 3) / 3;
         self.r = value;
         self.g = value;
         self.b = value;
