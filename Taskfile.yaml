@@ -63,6 +63,12 @@ tasks:
       - echo 'Building project...'
       - cargo build
 
+  run:
+    desc: Run cargo
+    cmds:
+      - echo 'Running project...'
+      - cargo run -- {{.CLI_ARGS}}
+
   test:
     desc: Test project
     cmds:
