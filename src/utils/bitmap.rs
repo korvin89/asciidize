@@ -93,9 +93,9 @@ mod tests {
 
     use super::*;
 
-    const IMAGE_2X2: &str = "2x2";
-    const IMAGE_FROG_COLOR: &str = "frog_32x32_color";
-    const IMAGE_FROG_GRAY: &str = "frog_32x32_gray";
+    const IMAGE_2X2: &str = "2x2.png";
+    const IMAGE_FROG_COLOR: &str = "frog_32x32_color.png";
+    const IMAGE_FROG_GRAY: &str = "frog_32x32_gray.png";
 
     fn get_bitmap() -> Bitmap {
         let pixels = vec![
@@ -144,10 +144,10 @@ mod tests {
     #[test]
     fn test_save_to_file() {
         let bitmap = get_bitmap();
-        let filename = test::get_test_file_path(&ImageType::PNG, IMAGE_2X2);
+        let filename = test::get_test_file_path(IMAGE_2X2);
         save_to_file(&bitmap, &filename, &ImageType::PNG);
 
-        let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_2X2);
+        let expected_filename = test::get_expected_file_path(IMAGE_2X2);
         assert_file_content(&filename, &expected_filename);
 
         std::fs::remove_file(&filename).unwrap();
@@ -155,7 +155,7 @@ mod tests {
 
     #[test]
     fn test_load_from_file() {
-        let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_2X2);
+        let expected_filename = test::get_expected_file_path(IMAGE_2X2);
         let bitmap = load_from_file(&expected_filename, &ImageType::PNG);
         let expected_bitmap = get_bitmap();
         assert_eq!(bitmap, expected_bitmap);
@@ -163,8 +163,8 @@ mod tests {
 
     #[test]
     fn test_to_grayscale() {
-        let gray_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_FROG_COLOR);
-        let expected_filename = test::get_expected_file_path(&ImageType::PNG, IMAGE_FROG_GRAY);
+        let gray_filename = test::get_expected_file_path(IMAGE_FROG_COLOR);
+        let expected_filename = test::get_expected_file_path(IMAGE_FROG_GRAY);
         let mut result_bitmap = load_from_file(&gray_filename, &ImageType::PNG);
         result_bitmap.to_grayscale();
         let expected_bitmap = load_from_file(&expected_filename, &ImageType::PNG);
