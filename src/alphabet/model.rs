@@ -1,13 +1,13 @@
 use crate::constants;
 
 pub struct Alphabet {
-    simbols: Vec<char>,
+    symbols: Vec<char>,
 }
 
 impl Alphabet {
     #[must_use]
-    pub fn new(simbols: Vec<char>) -> Alphabet {
-        return Alphabet { simbols };
+    pub fn new(symbols: Vec<char>) -> Alphabet {
+        return Alphabet { symbols };
     }
 
     #[must_use]
@@ -39,7 +39,7 @@ impl Alphabet {
             result.push('\n');
         }
 
-        for row in self.simbols.chunks(width) {
+        for row in self.symbols.chunks(width) {
             for _ in 0..left_padding {
                 result.push(padding_symbol);
             }
@@ -70,19 +70,19 @@ mod tests {
     #[test]
     fn test_new() {
         let alphabet = Alphabet::new(vec!['A', 'B', 'C']);
-        assert_eq!(alphabet.simbols.len(), 3);
+        assert_eq!(alphabet.symbols.len(), 3);
     }
 
     #[test]
     fn test_from_symbol_str() {
         let alphabet = Alphabet::from_symbol_str("ABC");
-        assert_eq!(alphabet.simbols.len(), 3);
+        assert_eq!(alphabet.symbols.len(), 3);
     }
 
     #[test]
     fn test_from_default() {
         let alphabet = Alphabet::from_default();
-        assert_eq!(alphabet.simbols.len(), 95);
+        assert_eq!(alphabet.symbols.len(), 95);
     }
 
     #[test]
