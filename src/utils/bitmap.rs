@@ -9,12 +9,35 @@ pub struct Pixel {
 }
 
 impl Pixel {
+    #[must_use]
+    pub fn get_intensity(&self) -> u8 {
+        return self.r / 3 + self.g / 3 + self.b / 3 + (self.r % 3 + self.g % 3 + self.b % 3) / 3;
+    }
+
     pub fn to_grayscale(&mut self) {
-        let value =
-            self.r / 3 + self.g / 3 + self.b / 3 + (self.r % 3 + self.g % 3 + self.b % 3) / 3;
+        let value = self.get_intensity();
         self.r = value;
         self.g = value;
         self.b = value;
+    }
+
+    pub fn to_black_and_white(&mut self, threshold: u8) {
+        let value = self.get_intensity();
+        if value > threshold {
+            self.r = 255;
+            self.g = 255;
+            self.b = 255;
+        } else {
+            self.r = 0;
+            self.g = 0;
+            self.b = 0;
+        }
+    }
+
+    pub fn to_inverse(&mut self) {
+        self.r = 255 - self.r;
+        self.g = 255 - self.g;
+        self.b = 255 - self.b;
     }
 }
 
@@ -30,6 +53,39 @@ impl Bitmap {
         for y in 0..self.height {
             for x in 0..self.width {
                 self.pixels[y as usize][x as usize].to_grayscale();
+            }
+        }
+    }
+
+    pub fn to_black_and_white(&mut self) {
+        let mut max_intensity = 0;
+        let mut min_intensity = 255;
+
+        for y in 0..self.height {
+            for x in 0..self.width {
+                let intensity = self.pixels[y as usize][x as usize].get_intensity();
+                if intensity > max_intensity {
+                    max_intensity = intensity;
+                }
+                if intensity < min_intensity {
+                    min_intensity = intensity;
+                }
+            }
+        }
+
+        let threshold = (max_intensity + min_intensity) / 2;
+
+        for y in 0..self.height {
+            for x in 0..self.width {
+                self.pixels[y as usize][x as usize].to_black_and_white(threshold);
+            }
+        }
+    }
+
+    pub fn to_inverse(&mut self) {
+        for y in 0..self.height {
+            for x in 0..self.width {
+                self.pixels[y as usize][x as usize].to_inverse();
             }
         }
     }
@@ -96,6 +152,8 @@ mod tests {
     const IMAGE_2X2: &str = "2x2.png";
     const IMAGE_FROG_COLOR: &str = "frog_32x32_color.png";
     const IMAGE_FROG_GRAY: &str = "frog_32x32_gray.png";
+    const IMAGE_FROG_BW: &str = "frog_32x32_bw.png";
+    const IMAGE_FROG_INVERSE: &str = "frog_32x32_inverse.png";
 
     fn get_bitmap() -> Bitmap {
         let pixels = vec![
@@ -163,11 +221,37 @@ mod tests {
 
     #[test]
     fn test_to_grayscale() {
-        let gray_filename = test::get_expected_file_path(IMAGE_FROG_COLOR);
+        let color_filename = test::get_expected_file_path(IMAGE_FROG_COLOR);
         let expected_filename = test::get_expected_file_path(IMAGE_FROG_GRAY);
-        let mut result_bitmap = load_from_file(&gray_filename, &ImageType::PNG);
-        result_bitmap.to_grayscale();
         let expected_bitmap = load_from_file(&expected_filename, &ImageType::PNG);
-        assert_eq!(result_bitmap, expected_bitmap);
+
+        let mut bitmap = load_from_file(&color_filename, &ImageType::PNG);
+        bitmap.to_grayscale();
+
+        assert_eq!(bitmap, expected_bitmap);
+    }
+
+    #[test]
+    fn test_to_black_and_white() {
+        let color_filename = test::get_expected_file_path(IMAGE_FROG_COLOR);
+        let expected_filename = test::get_expected_file_path(IMAGE_FROG_BW);
+        let expected_bitmap = load_from_file(&expected_filename, &ImageType::PNG);
+
+        let mut bitmap = load_from_file(&color_filename, &ImageType::PNG);
+        bitmap.to_black_and_white();
+
+        assert_eq!(bitmap, expected_bitmap);
+    }
+
+    #[test]
+    fn test_to_inverse() {
+        let color_filename = test::get_expected_file_path(IMAGE_FROG_COLOR);
+        let expected_filename = test::get_expected_file_path(IMAGE_FROG_INVERSE);
+        let expected_bitmap = load_from_file(&expected_filename, &ImageType::PNG);
+
+        let mut bitmap = load_from_file(&color_filename, &ImageType::PNG);
+        bitmap.to_inverse();
+
+        assert_eq!(bitmap, expected_bitmap);
     }
 }
