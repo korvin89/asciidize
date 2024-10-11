@@ -1,4 +1,5 @@
 use crate::alphabet::Alphabet;
+use crate::constants;
 use crate::utils;
 use clap::Subcommand;
 
@@ -31,22 +32,25 @@ pub fn run(
     }
 }
 
-const DEFAULT_WIDTH: usize = 20;
-
 fn print(
     width: &Option<usize>,
     alphabet_string: &Option<String>,
     mut stdout: impl std::io::Write,
     mut _stderr: impl std::io::Write,
 ) -> Result<(), utils::cli::CommandError> {
-    let width = width.unwrap_or(DEFAULT_WIDTH);
-
     let alphabet = match alphabet_string {
         Some(alphabet_string) => Alphabet::from_symbol_str(alphabet_string),
         None => Alphabet::from_default(),
     };
 
-    let sample_string = alphabet.to_sample_string(width, 1, 1, 1, 1, ' ');
+    let sample_string = alphabet.to_sample_string(
+        width.unwrap_or(constants::ALPHABET_SAMPLE_STRING_DEFAULT_WIDTH),
+        constants::ALPHABET_SAMPLE_STRING_DEFAULT_LEFT_PADDING,
+        constants::ALPHABET_SAMPLE_STRING_DEFAULT_RIGHT_PADDING,
+        constants::ALPHABET_SAMPLE_STRING_DEFAULT_TOP_PADDING,
+        constants::ALPHABET_SAMPLE_STRING_DEFAULT_BOTTOM_PADDING,
+        constants::ALPHABET_SAMPLE_STRING_DEFAULT_PADDING_SYMBOL,
+    );
     writeln!(stdout, "{sample_string}").unwrap();
 
     return Ok(());

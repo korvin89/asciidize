@@ -1,11 +1,8 @@
+use crate::constants;
+
 pub struct Alphabet {
     simbols: Vec<char>,
 }
-
-const DEFAULT_ALPHABET_STR: &str = "
- !\"#$%&'()*+,-./0123456789:;<=>?[\\]^_`{|}~@
-ABCDEFGHIJKLMNOPQRSTUVWXYZ
-abcdefghijklmnopqrstuvwxyz";
 
 impl Alphabet {
     #[must_use]
@@ -20,7 +17,7 @@ impl Alphabet {
 
     #[must_use]
     pub fn from_default() -> Alphabet {
-        return Alphabet::from_symbol_str(DEFAULT_ALPHABET_STR);
+        return Alphabet::from_symbol_str(constants::DEFAULT_ALPHABET_SYMBOL_STR);
     }
 
     #[must_use]
@@ -85,7 +82,7 @@ mod tests {
     #[test]
     fn test_from_default() {
         let alphabet = Alphabet::from_default();
-        assert_eq!(alphabet.simbols.len(), 98);
+        assert_eq!(alphabet.simbols.len(), 95);
     }
 
     #[test]
