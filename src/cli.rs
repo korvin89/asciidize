@@ -1,4 +1,4 @@
-use crate::alphabet_mapper;
+use crate::alphabet;
 use crate::utils;
 use clap::{Parser, Subcommand};
 
@@ -15,7 +15,7 @@ pub enum Commands {
     /// Alphabet commands
     Alphabet {
         #[command(subcommand)]
-        subcommand: Option<alphabet_mapper::cli::AlphabetCommand>,
+        subcommand: Option<alphabet::cli::Command>,
     },
 }
 
@@ -29,7 +29,7 @@ pub fn root(
 ) -> Result<(), utils::cli::CommandError> {
     match command {
         Some(Commands::Alphabet { subcommand }) => {
-            return alphabet_mapper::cli::run(subcommand, &mut stdout, &mut stderr);
+            return alphabet::cli::run(subcommand, &mut stdout, &mut stderr);
         }
         None => {
             return none();
