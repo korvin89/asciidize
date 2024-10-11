@@ -1,3 +1,3 @@
-pub mod alphabet_mapper;
+pub mod alphabet;
 pub mod cli;
 pub mod utils;

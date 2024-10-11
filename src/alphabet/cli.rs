@@ -1,9 +1,9 @@
-use crate::alphabet_mapper::alphabet::Alphabet;
+use crate::alphabet::Alphabet;
 use crate::utils;
 use clap::Subcommand;
 
 #[derive(Subcommand, Clone)]
-pub enum AlphabetCommand {
+pub enum Command {
     /// Prints alphabet
     Print {
         #[clap(short, long)]
@@ -17,12 +17,12 @@ pub enum AlphabetCommand {
 /// # Errors
 /// Returns an error if the command is not provided
 pub fn run(
-    command: &Option<AlphabetCommand>,
+    command: &Option<Command>,
     mut stdout: impl std::io::Write,
     mut stderr: impl std::io::Write,
 ) -> Result<(), utils::cli::CommandError> {
     match command {
-        Some(AlphabetCommand::Print { width, alphabet }) => {
+        Some(Command::Print { width, alphabet }) => {
             return print(width, alphabet, &mut stdout, &mut stderr);
         }
         None => {

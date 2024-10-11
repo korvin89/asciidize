@@ -4,7 +4,7 @@ use std::collections::HashMap;
 use std::fmt;
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct AlphabetMap {
+pub struct Map {
     symbol_width: u32,
     symbol_height: u32,
     symbol_map: HashMap<char, Vec<Vec<u8>>>,
@@ -21,7 +21,7 @@ impl fmt::Display for InvalidDataError {
     }
 }
 
-impl FromStr for AlphabetMap {
+impl FromStr for Map {
     type Err = InvalidDataError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -33,7 +33,7 @@ impl FromStr for AlphabetMap {
     }
 }
 
-impl fmt::Display for AlphabetMap {
+impl fmt::Display for Map {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         return write!(f, "{}", serde_json::to_string(self).unwrap());
     }
@@ -47,7 +47,7 @@ mod tests {
     fn test_to_string() {
         let mut symbol_map = HashMap::new();
         symbol_map.insert('A', vec![vec![1, 1, 1], vec![1, 0, 1], vec![1, 1, 1]]);
-        let alphabet_map = AlphabetMap {
+        let alphabet_map = Map {
             symbol_width: 3,
             symbol_height: 3,
             symbol_map: symbol_map,
@@ -59,7 +59,7 @@ mod tests {
     #[test]
     fn test_from_str() {
         let json_string = "{\"symbol_width\":3,\"symbol_height\":3,\"symbol_map\":{\"A\":[[1,1,1],[1,0,1],[1,1,1]]}}";
-        let alphabet_map = AlphabetMap::from_str(json_string).unwrap();
+        let alphabet_map = Map::from_str(json_string).unwrap();
         assert_eq!(alphabet_map.symbol_width, 3);
         assert_eq!(alphabet_map.symbol_height, 3);
         assert_eq!(
@@ -71,7 +71,7 @@ mod tests {
     #[test]
     fn test_from_str_invalid_data() {
         let json_string = "{";
-        let alphabet_map = AlphabetMap::from_str(json_string);
+        let alphabet_map = Map::from_str(json_string);
         assert_eq!(alphabet_map.is_err(), true);
         assert_eq!(
             alphabet_map.err().unwrap().to_string(),
