@@ -34,7 +34,7 @@ impl Pixel {
         }
     }
 
-    pub fn to_invert(&mut self) {
+    pub fn to_inverse(&mut self) {
         self.r = 255 - self.r;
         self.g = 255 - self.g;
         self.b = 255 - self.b;
@@ -82,10 +82,10 @@ impl Bitmap {
         }
     }
 
-    pub fn to_invert(&mut self) {
+    pub fn to_inverse(&mut self) {
         for y in 0..self.height {
             for x in 0..self.width {
-                self.pixels[y as usize][x as usize].to_invert();
+                self.pixels[y as usize][x as usize].to_inverse();
             }
         }
     }
@@ -153,7 +153,7 @@ mod tests {
     const IMAGE_FROG_COLOR: &str = "frog_32x32_color.png";
     const IMAGE_FROG_GRAY: &str = "frog_32x32_gray.png";
     const IMAGE_FROG_BW: &str = "frog_32x32_bw.png";
-    const IMAGE_FROG_INVERT: &str = "frog_32x32_invert.png";
+    const IMAGE_FROG_INVERSE: &str = "frog_32x32_inverse.png";
 
     fn get_bitmap() -> Bitmap {
         let pixels = vec![
@@ -244,13 +244,13 @@ mod tests {
     }
 
     #[test]
-    fn test_to_invert() {
+    fn test_to_inverse() {
         let color_filename = test::get_expected_file_path(IMAGE_FROG_COLOR);
-        let expected_filename = test::get_expected_file_path(IMAGE_FROG_INVERT);
+        let expected_filename = test::get_expected_file_path(IMAGE_FROG_INVERSE);
         let expected_bitmap = load_from_file(&expected_filename, &ImageType::PNG);
 
         let mut bitmap = load_from_file(&color_filename, &ImageType::PNG);
-        bitmap.to_invert();
+        bitmap.to_inverse();
 
         assert_eq!(bitmap, expected_bitmap);
     }
