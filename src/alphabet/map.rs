@@ -5,8 +5,8 @@ use std::fmt;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Map {
-    symbol_width: u32,
-    symbol_height: u32,
+    symbol_width: usize,
+    symbol_height: usize,
     symbol_map: HashMap<char, Vec<Vec<u8>>>,
 }
 

@@ -49,6 +49,10 @@ fn print(
         constants::ALPHABET_SAMPLE_FILLER_SYMBOL,
     );
     sample.add_padding(
+        constants::ALPHABET_SAMPLE_BORDER_SYMBOL,
+        constants::ALPHABET_SAMPLE_BORDER_WIDTH,
+    );
+    sample.add_padding(
         constants::ALPHABET_SAMPLE_PADDING_SYMBOL,
         constants::ALPHABET_SAMPLE_PADDING_WIDTH,
     );
