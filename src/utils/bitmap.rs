@@ -43,8 +43,8 @@ impl Pixel {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct Bitmap {
-    pub width: u32,
-    pub height: u32,
+    pub width: usize,
+    pub height: usize,
     pub pixels: Vec<Vec<Pixel>>,
 }
 
@@ -52,7 +52,7 @@ impl Bitmap {
     pub fn to_grayscale(&mut self) {
         for y in 0..self.height {
             for x in 0..self.width {
-                self.pixels[y as usize][x as usize].to_grayscale();
+                self.pixels[y][x].to_grayscale();
             }
         }
     }
@@ -63,7 +63,7 @@ impl Bitmap {
 
         for y in 0..self.height {
             for x in 0..self.width {
-                let intensity = self.pixels[y as usize][x as usize].get_intensity();
+                let intensity = self.pixels[y][x].get_intensity();
                 if intensity > max_intensity {
                     max_intensity = intensity;
                 }
@@ -77,7 +77,7 @@ impl Bitmap {
 
         for y in 0..self.height {
             for x in 0..self.width {
-                self.pixels[y as usize][x as usize].to_black_and_white(threshold);
+                self.pixels[y][x].to_black_and_white(threshold);
             }
         }
     }
@@ -85,19 +85,19 @@ impl Bitmap {
     pub fn to_inverse(&mut self) {
         for y in 0..self.height {
             for x in 0..self.width {
-                self.pixels[y as usize][x as usize].to_inverse();
+                self.pixels[y][x].to_inverse();
             }
         }
     }
 }
 
 #[must_use]
-pub fn crop(bitmap: &Bitmap, x: u32, y: u32, width: u32, height: u32) -> Bitmap {
+pub fn crop(bitmap: &Bitmap, x: usize, y: usize, width: usize, height: usize) -> Bitmap {
     let mut pixels = Vec::new();
     for row in y..y + height {
         let mut new_row = Vec::new();
         for column in x..x + width {
-            new_row.push(bitmap.pixels[row as usize][column as usize].clone());
+            new_row.push(bitmap.pixels[row][column].clone());
         }
         pixels.push(new_row);
     }
@@ -119,11 +119,18 @@ pub fn save_to_file(bitmap: &Bitmap, filename: &str, image_type: &ImageType) {
 }
 
 fn save_to_png_file(bitmap: &Bitmap, filename: &str) {
-    let mut image_buffer = image::ImageBuffer::new(bitmap.width, bitmap.height);
+    let mut image_buffer = image::ImageBuffer::new(
+        u32::try_from(bitmap.width).unwrap(),
+        u32::try_from(bitmap.height).unwrap(),
+    );
     for y in 0..bitmap.height {
         for x in 0..bitmap.width {
-            let pixel = bitmap.pixels[y as usize][x as usize].clone();
-            image_buffer.put_pixel(x, y, image::Rgba([pixel.r, pixel.g, pixel.b, pixel.a]));
+            let pixel = &bitmap.pixels[y][x];
+            image_buffer.put_pixel(
+                u32::try_from(x).unwrap(),
+                u32::try_from(y).unwrap(),
+                image::Rgba([pixel.r, pixel.g, pixel.b, pixel.a]),
+            );
         }
     }
     image_buffer.save(filename).unwrap();
@@ -154,8 +161,8 @@ fn load_from_png_file(filename: &str) -> Bitmap {
         pixels.push(row);
     }
     return Bitmap {
-        width,
-        height,
+        width: usize::try_from(width).unwrap(),
+        height: usize::try_from(height).unwrap(),
         pixels,
     };
 }
