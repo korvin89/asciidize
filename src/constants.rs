@@ -11,4 +11,4 @@ pub const ALPHABET_SAMPLE_FILLER_SYMBOL: char = ' ';
 pub const ALPHABET_SAMPLE_BORDER_SYMBOL: char = 'X';
 pub const ALPHABET_SAMPLE_BORDER_WIDTH: usize = 1;
 pub const ALPHABET_SAMPLE_PADDING_SYMBOL: char = ' ';
-pub const ALPHABET_SAMPLE_PADDING_WIDTH: usize = 1;
+pub const ALPHABET_SAMPLE_PADDING_WIDTH: usize = 3;
