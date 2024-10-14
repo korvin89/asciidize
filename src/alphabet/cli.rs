@@ -1,4 +1,4 @@
-use crate::alphabet::Alphabet;
+use crate::alphabet::{Alphabet, Sample};
 use crate::constants;
 use crate::utils;
 use clap::Subcommand;
@@ -38,20 +38,22 @@ fn print(
     mut stdout: impl std::io::Write,
     mut _stderr: impl std::io::Write,
 ) -> Result<(), utils::cli::CommandError> {
-    let alphabet = match alphabet_string {
-        Some(alphabet_string) => Alphabet::from_symbol_str(alphabet_string),
-        None => Alphabet::from_default(),
-    };
+    let alphabet = Alphabet::from_symbol_str(match alphabet_string {
+        Some(alphabet_string) => alphabet_string,
+        None => constants::ALPHABET_SYMBOL_STR,
+    });
 
-    let sample_string = alphabet.to_sample_string(
-        width.unwrap_or(constants::ALPHABET_SAMPLE_STRING_DEFAULT_WIDTH),
-        constants::ALPHABET_SAMPLE_STRING_DEFAULT_LEFT_PADDING,
-        constants::ALPHABET_SAMPLE_STRING_DEFAULT_RIGHT_PADDING,
-        constants::ALPHABET_SAMPLE_STRING_DEFAULT_TOP_PADDING,
-        constants::ALPHABET_SAMPLE_STRING_DEFAULT_BOTTOM_PADDING,
-        constants::ALPHABET_SAMPLE_STRING_DEFAULT_PADDING_SYMBOL,
+    let mut sample = Sample::from_alphabet(
+        &alphabet,
+        width.unwrap_or(constants::ALPHABET_SAMPLE_WIDTH),
+        constants::ALPHABET_SAMPLE_FILLER_SYMBOL,
     );
-    writeln!(stdout, "{sample_string}").unwrap();
+    sample.add_padding(
+        constants::ALPHABET_SAMPLE_PADDING_SYMBOL,
+        constants::ALPHABET_SAMPLE_PADDING_WIDTH,
+    );
+
+    writeln!(stdout, "{sample}").unwrap();
 
     return Ok(());
 }
