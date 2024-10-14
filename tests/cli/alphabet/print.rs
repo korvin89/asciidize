@@ -9,7 +9,17 @@ fn test_print() -> Result<(), Box<dyn std::error::Error>> {
     cmd.arg("--width").arg("3");
     cmd.arg("--alphabet").arg("abcdefg");
 
-    let expected_stdout = "     \n abc \n def \n g   \n     \n";
+    let expected_stdout = "           \
+    \n           \
+    \n           \
+    \n   XXXXX   \
+    \n   XabcX   \
+    \n   XdefX   \
+    \n   Xg  X   \
+    \n   XXXXX   \
+    \n           \
+    \n           \
+    \n           \n";
 
     cmd.assert().success();
     cmd.assert().code(0);
