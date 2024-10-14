@@ -12,10 +12,10 @@ impl Sample {
 
     #[must_use]
     pub fn from_alphabet(alphabet: &Alphabet, width: usize, filler_symbol: char) -> Sample {
-        let mut chars = vec![];
+        let mut chars = Vec::new();
 
         for chunk in alphabet.symbols.chunks(width) {
-            let mut row = vec![];
+            let mut row = Vec::new();
             for symbol in chunk {
                 row.push(*symbol);
             }
@@ -29,13 +29,13 @@ impl Sample {
     }
 
     pub fn add_padding(&mut self, padding_symbol: char, padding_width: usize) {
-        let mut chars = vec![];
+        let mut chars = Vec::new();
 
         let original_width = self.chars[0].len();
         let result_width = original_width + 2 * padding_width;
 
         for _ in 0..padding_width {
-            let mut row = vec![];
+            let mut row = Vec::new();
             for _ in 0..result_width {
                 row.push(padding_symbol);
             }
@@ -43,7 +43,7 @@ impl Sample {
         }
 
         for row in &self.chars {
-            let mut new_row = vec![];
+            let mut new_row = Vec::new();
             for _ in 0..padding_width {
                 new_row.push(padding_symbol);
             }
@@ -57,7 +57,7 @@ impl Sample {
         }
 
         for _ in 0..padding_width {
-            let mut row = vec![];
+            let mut row = Vec::new();
             for _ in 0..result_width {
                 row.push(padding_symbol);
             }
