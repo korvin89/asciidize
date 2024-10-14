@@ -91,6 +91,23 @@ impl Bitmap {
     }
 }
 
+#[must_use]
+pub fn crop(bitmap: &Bitmap, x: u32, y: u32, width: u32, height: u32) -> Bitmap {
+    let mut pixels = Vec::new();
+    for row in y..y + height {
+        let mut new_row = Vec::new();
+        for column in x..x + width {
+            new_row.push(bitmap.pixels[row as usize][column as usize].clone());
+        }
+        pixels.push(new_row);
+    }
+    return Bitmap {
+        width,
+        height,
+        pixels,
+    };
+}
+
 pub enum ImageType {
     PNG,
 }
@@ -154,6 +171,7 @@ mod tests {
     const IMAGE_FROG_GRAY: &str = "frog_32x32_gray.png";
     const IMAGE_FROG_BW: &str = "frog_32x32_bw.png";
     const IMAGE_FROG_INVERSE: &str = "frog_32x32_inverse.png";
+    const IMAGE_FROG_CROPPED: &str = "frog_32x32_cropped.png";
 
     fn get_bitmap() -> Bitmap {
         let pixels = vec![
@@ -253,5 +271,17 @@ mod tests {
         bitmap.to_inverse();
 
         assert_eq!(bitmap, expected_bitmap);
+    }
+
+    #[test]
+    fn test_crop() {
+        let color_filename = test::get_expected_file_path(IMAGE_FROG_COLOR);
+        let expected_filename = test::get_expected_file_path(IMAGE_FROG_CROPPED);
+        let expected_bitmap = load_from_file(&expected_filename, &ImageType::PNG);
+
+        let bitmap = load_from_file(&color_filename, &ImageType::PNG);
+        let cropped_bitmap = crop(&bitmap, 3, 8, 24, 12);
+
+        assert_eq!(cropped_bitmap, expected_bitmap);
     }
 }
